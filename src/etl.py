@@ -63,7 +63,9 @@ def compute_delivery_days(df: pd.DataFrame) -> pd.Series:
     Returns:
         Series of delivery days (float, NaN where delivery not recorded).
     """
-    purchase = pd.to_datetime(df["order_purchase_timestamp"], errors="coerce")
+    # Column is aliased to order_date in the flat table SQL
+    purchase_col = "order_date" if "order_date" in df.columns else "order_purchase_timestamp"
+    purchase = pd.to_datetime(df[purchase_col], errors="coerce")
     delivered = pd.to_datetime(df["order_delivered_customer_date"], errors="coerce")
     return (delivered - purchase).dt.days
 
@@ -244,6 +246,6 @@ def export_powerbi_csv(df: pd.DataFrame) -> Path:
     export_df.to_csv(csv_path, index=False)
     export_df.to_excel(xlsx_path, index=False, engine="openpyxl")
     print(f"Power BI export: {len(export_df):,} rows")
-    print(f"  CSV  → {csv_path}")
-    print(f"  XLSX → {xlsx_path}")
+    print(f"  CSV  -> {csv_path}")
+    print(f"  XLSX -> {xlsx_path}")
     return csv_path

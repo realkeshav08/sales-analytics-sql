@@ -88,10 +88,12 @@ def load_csv(file_name: str, parse_dates: bool = True) -> pd.DataFrame:
 
     df = pd.read_csv(
         path,
-        parse_dates=date_cols if date_cols else False,
-        infer_datetime_format=True,
         low_memory=False,
     )
+    # Parse datetime columns after load (infer_datetime_format removed in pandas 3)
+    for col in date_cols:
+        if col in df.columns:
+            df[col] = pd.to_datetime(df[col], errors="coerce")
     return df
 
 
@@ -128,7 +130,7 @@ def load_all_tables(engine) -> dict[str, int]:
     row_counts: dict[str, int] = {}
 
     for csv_file, table_name in CSV_TABLE_MAP.items():
-        print(f"  Loading {csv_file} → {table_name} ...", end=" ", flush=True)
+        print(f"  Loading {csv_file} -> {table_name} ...", end=" ", flush=True)
         df = load_csv(csv_file)
         df.to_sql(table_name, engine, if_exists="replace", index=False)
         count = len(df)
@@ -176,7 +178,7 @@ def setup_database() -> dict[str, int]:
         Row counts dict.
     """
     print("=" * 60)
-    print("Sales Analytics — Database Setup")
+    print("Sales Analytics - Database Setup")
     print("=" * 60)
 
     engine = get_engine()

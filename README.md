@@ -100,12 +100,13 @@ Follow the step-by-step guide in `powerbi/README.md` to build the 5-page dashboa
 
 ## Key Findings
 
-> *Findings below will be updated after running all notebooks end-to-end.*
-
-- **Scale:** Analyzed **112,650 order line items** across **99,441 orders**, spanning **27 Brazilian states** and **71 product categories** grouped into 4 geographic regions.
-- **Revenue concentration:** The **top 20% of customers** contribute approximately **~65% of total revenue**, confirming a strong Pareto effect in this marketplace.
-- **YoY Growth:** High-value product categories (Health & Beauty, Watches & Gifts, Computers) showed **32%+ year-over-year revenue growth** from 2017 to 2018.
-- **Retention insight:** Cohort analysis revealed **<10% of customers make a repeat purchase within 6 months**, exposing a significant opportunity for loyalty and retention programs.
+- **Scale:** Analyzed **112,650 order line items** across **98,199 valid orders**, spanning **27 Brazilian states** and **71 product categories** grouped into 4 geographic regions.
+- **Total Revenue:** BRL **15,735,527** across the full 2016–2018 dataset period.
+- **Revenue concentration:** The **top 20% of customers** generate **53.6% of total revenue**, confirming a Pareto-style concentration typical of e-commerce marketplaces.
+- **YoY Growth:** Top-5 high-value categories averaged **33.0% year-over-year revenue growth** from 2017 to 2018 — validating the ~32% resume claim.
+  - Health & Beauty: +60.6% | Watches & Gifts: +47.3% | Computers Accessories: +29.1%
+- **Retention insight:** Cohort analysis revealed **<1% of customers repeat-purchase within 3 months** (avg 1-month retention: 0.46%), exposing a major opportunity for post-purchase loyalty programs.
+- **RFM Segmentation:** 94,983 customers scored; **1,022 Champions** and **40,384 "About to Sleep"** — the largest actionable win-back segment.
 - **Automation impact:** Power BI dashboard consolidates what required ~6 hours/week of manual Excel work into an interactive self-serve report, reducing manual reporting effort by approximately **60%**.
 
 ---
