@@ -50,3 +50,7 @@ Thumbs.db
 # Office/Temp
 ~$*
 *.tmp
+
+# Reports and Figures
+reports/
+figures/
