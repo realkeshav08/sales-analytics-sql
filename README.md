@@ -1,5 +1,6 @@
 # Sales Performance Analytics — Brazilian E-Commerce (Olist)
 
+[![CI](https://github.com/realkeshav08/sales-analytics-sql/actions/workflows/ci.yml/badge.svg)](https://github.com/realkeshav08/sales-analytics-sql/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
 ![SQLite](https://img.shields.io/badge/SQLite-3-lightblue?logo=sqlite)
 ![Pandas](https://img.shields.io/badge/Pandas-2.0-green?logo=pandas)
