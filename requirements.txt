@@ -1,8 +1,14 @@
-pandas==2.0.3
-numpy==1.24.3
-sqlalchemy==2.0.20
-matplotlib==3.7.2
-seaborn==0.12.2
-jupyter==1.0.0
-notebook==7.0.0
-openpyxl==3.1.2
+# Runtime dependencies.
+# Version ranges are kept open enough to install on Python 3.10 through 3.14.
+# Lower bounds reflect the oldest releases the code is known to work with;
+# upper bounds guard against the next known breaking major.
+pandas>=2.0,<4.0
+numpy>=1.24,<3.0
+SQLAlchemy>=2.0,<3.0
+matplotlib>=3.7,<4.0
+seaborn>=0.12,<1.0
+openpyxl>=3.1,<4.0
+
+# Notebook tooling (only needed to run the .ipynb files; not imported by src/).
+jupyter>=1.0
+notebook>=7.0

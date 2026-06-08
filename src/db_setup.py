@@ -12,8 +12,7 @@ import sqlite3
 from pathlib import Path
 
 import pandas as pd
-from sqlalchemy import create_engine, text
-
+from sqlalchemy import create_engine
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -83,6 +82,13 @@ def load_csv(file_name: str, parse_dates: bool = True) -> pd.DataFrame:
         DataFrame with data from the CSV.
     """
     path = RAW_DIR / file_name
+    if not path.exists():
+        raise FileNotFoundError(
+            f"Required dataset '{file_name}' was not found in {RAW_DIR}.\n"
+            "Download the Olist Brazilian E-Commerce dataset from Kaggle "
+            "(https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) "
+            "and place all 9 CSV files in data/raw/."
+        )
     table = CSV_TABLE_MAP[file_name]
     date_cols = DATETIME_COLS.get(table, []) if parse_dates else []
 

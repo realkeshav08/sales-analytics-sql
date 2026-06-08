@@ -8,16 +8,14 @@ chart saving, and KPI calculation used across notebooks.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
-import numpy as np
 import pandas as pd
 import seaborn as sns
-
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 FIGURES_DIR = BASE_DIR / "reports" / "figures"
@@ -216,10 +214,21 @@ def score_rfm(rfm: pd.DataFrame) -> pd.DataFrame:
     """
     rfm = rfm.copy()
 
-    # Recency: lower days = better = score 5
-    rfm["r_score"] = pd.qcut(rfm["recency"], q=5, labels=[5, 4, 3, 2, 1]).astype(int)
-    rfm["f_score"] = pd.qcut(rfm["frequency"].rank(method="first"), q=5, labels=[1, 2, 3, 4, 5]).astype(int)
-    rfm["m_score"] = pd.qcut(rfm["monetary"].rank(method="first"), q=5, labels=[1, 2, 3, 4, 5]).astype(int)
+    # All three dimensions are scored on a ranked series with method="first".
+    # Ranking before qcut guarantees unique bin edges, so heavily tied inputs
+    # (e.g. a cohort where most customers share the same recency) can never
+    # raise "Bin edges must be unique". Recency is ranked descending so that
+    # lower days (more recent) map to the highest score of 5.
+    rfm["r_score"] = pd.qcut(
+        rfm["recency"].rank(method="first", ascending=False),
+        q=5, labels=[1, 2, 3, 4, 5],
+    ).astype(int)
+    rfm["f_score"] = pd.qcut(
+        rfm["frequency"].rank(method="first"), q=5, labels=[1, 2, 3, 4, 5]
+    ).astype(int)
+    rfm["m_score"] = pd.qcut(
+        rfm["monetary"].rank(method="first"), q=5, labels=[1, 2, 3, 4, 5]
+    ).astype(int)
 
     rfm["rfm_score"] = rfm["r_score"].astype(str) + rfm["f_score"].astype(str) + rfm["m_score"].astype(str)
     return rfm

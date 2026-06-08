@@ -2,29 +2,42 @@
 End-to-end validation script.
 Runs cohort analysis, RFM, and Power BI export — equivalent to notebooks 03-05.
 """
-import sys
 import json
+import sys
 import warnings
-warnings.filterwarnings("ignore")
+
+# Suppress only the noisy third-party deprecation chatter from pandas/seaborn so
+# the pipeline output stays readable. Real warnings (e.g. RuntimeWarning from our
+# own numeric code) are still shown.
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 sys.path.insert(0, ".")
 
 import matplotlib
+
 matplotlib.use("Agg")
-import pandas as pd
-import numpy as np
 from pathlib import Path
 
-from src.db_setup import get_engine, DB_PATH
+import pandas as pd
+
 from src.analysis import (
-    build_cohort_table, build_retention_rates, plot_cohort_heatmap,
-    compute_avg_retention, save_fig,
-    compute_rfm, score_rfm, label_segments,
-    plot_segment_distribution, plot_segment_revenue,
+    build_cohort_table,
+    build_retention_rates,
+    compute_avg_retention,
+    label_segments,
+    plot_cohort_heatmap,
+    plot_segment_distribution,
+    plot_segment_revenue,
+    save_fig,
+    score_rfm,
 )
+from src.db_setup import get_engine
 from src.etl import (
-    build_master_flat_table, attach_rfm_segments,
-    attach_cohort_month, export_powerbi_csv,
+    attach_cohort_month,
+    attach_rfm_segments,
+    build_master_flat_table,
+    export_powerbi_csv,
 )
 
 engine = get_engine()

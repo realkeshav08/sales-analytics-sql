@@ -7,11 +7,13 @@ and building the denormalized Power BI export table.
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 import pandas as pd
-import numpy as np
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
+
+logger = logging.getLogger(__name__)
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -177,18 +179,23 @@ def attach_rfm_segments(df: pd.DataFrame, engine) -> pd.DataFrame:
     Returns:
         DataFrame with rfm_segment and is_high_value_customer columns added.
     """
-    try:
-        rfm = pd.read_sql_query(
-            "SELECT customer_unique_id, rfm_segment, is_high_value FROM rfm_segments",
-            engine,
+    if not inspect(engine).has_table("rfm_segments"):
+        logger.warning(
+            "rfm_segments table not found; defaulting rfm_segment to 'Unscored'. "
+            "Run the RFM segmentation step first."
         )
-        df = df.merge(rfm, on="customer_unique_id", how="left")
-        df["rfm_segment"] = df["rfm_segment"].fillna("Unscored")
-        df["is_high_value_customer"] = df["is_high_value"].fillna(0).astype(int)
-        df.drop(columns=["is_high_value"], inplace=True, errors="ignore")
-    except Exception:
         df["rfm_segment"] = "Unscored"
         df["is_high_value_customer"] = 0
+        return df
+
+    rfm = pd.read_sql_query(
+        "SELECT customer_unique_id, rfm_segment, is_high_value FROM rfm_segments",
+        engine,
+    )
+    df = df.merge(rfm, on="customer_unique_id", how="left")
+    df["rfm_segment"] = df["rfm_segment"].fillna("Unscored")
+    df["is_high_value_customer"] = df["is_high_value"].fillna(0).astype(int)
+    df.drop(columns=["is_high_value"], inplace=True, errors="ignore")
     return df
 
 
@@ -202,15 +209,20 @@ def attach_cohort_month(df: pd.DataFrame, engine) -> pd.DataFrame:
     Returns:
         DataFrame with customer_cohort_month column added.
     """
-    try:
-        cohort = pd.read_sql_query(
-            "SELECT customer_unique_id, cohort_month AS customer_cohort_month FROM customer_cohorts",
-            engine,
+    if not inspect(engine).has_table("customer_cohorts"):
+        logger.warning(
+            "customer_cohorts table not found; defaulting customer_cohort_month "
+            "to 'Unknown'. Run the cohort analysis step first."
         )
-        df = df.merge(cohort, on="customer_unique_id", how="left")
-        df["customer_cohort_month"] = df["customer_cohort_month"].fillna("Unknown")
-    except Exception:
         df["customer_cohort_month"] = "Unknown"
+        return df
+
+    cohort = pd.read_sql_query(
+        "SELECT customer_unique_id, cohort_month AS customer_cohort_month FROM customer_cohorts",
+        engine,
+    )
+    df = df.merge(cohort, on="customer_unique_id", how="left")
+    df["customer_cohort_month"] = df["customer_cohort_month"].fillna("Unknown")
     return df
 
 

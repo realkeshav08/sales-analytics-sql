@@ -98,6 +98,28 @@ Follow the step-by-step guide in `powerbi/README.md` to build the 5-page dashboa
 
 ---
 
+## Development
+
+Install dev dependencies and run the quality checks (no dataset required for tests/lint):
+
+```bash
+pip install -r requirements.txt -r requirements-dev.txt
+
+ruff check .        # lint
+pytest -q           # unit tests (run on synthetic data)
+```
+
+To rebuild the database and re-run the full analysis pipeline (requires the 9 CSVs in `data/raw/`):
+
+```bash
+python -m src.db_setup     # load CSVs -> SQLite, build indexes
+python validate_pipeline.py  # cohort + RFM + Power BI export
+```
+
+CI (GitHub Actions) runs lint and tests on Python 3.10, 3.12, and 3.13 for every push and pull request — see `.github/workflows/ci.yml`.
+
+---
+
 ## Key Findings
 
 - **Scale:** Analyzed **112,650 order line items** across **98,199 valid orders**, spanning **27 Brazilian states** and **71 product categories** grouped into 4 geographic regions.
@@ -106,7 +128,7 @@ Follow the step-by-step guide in `powerbi/README.md` to build the 5-page dashboa
 - **YoY Growth:** Top-5 high-value categories averaged **33.0% year-over-year revenue growth** from 2017 to 2018 — validating the ~32% resume claim.
   - Health & Beauty: +60.6% | Watches & Gifts: +47.3% | Computers Accessories: +29.1%
 - **Retention insight:** Cohort analysis revealed **<1% of customers repeat-purchase within 3 months** (avg 1-month retention: 0.46%), exposing a major opportunity for post-purchase loyalty programs.
-- **RFM Segmentation:** 94,983 customers scored; **1,022 Champions** and **40,384 "About to Sleep"** — the largest actionable win-back segment.
+- **RFM Segmentation:** 94,983 customers scored; **1,021 Champions** and **40,401 "About to Sleep"** — the largest actionable win-back segment.
 - **Automation impact:** Power BI dashboard consolidates what required ~6 hours/week of manual Excel work into an interactive self-serve report, reducing manual reporting effort by approximately **60%**.
 
 ---
